@@ -3,9 +3,26 @@
 
 generator client {
   provider = "prisma-client-js"
+
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider             = "postgresql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model ShortLink {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  url  String? @db.VarChar(1000)
+  User User[]
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  shortLink   ShortLink @relation(fields: [shortLinkId], references: [id])
+  shortLinkId Int
 }
